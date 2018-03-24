@@ -3,8 +3,10 @@ import pandas as pd
 import requests as req
 from PIL import Image
 from io import BytesIO
+import os
 
-train_df, out_directory = pd.read_csv('train.csv'), 'train_data'
+train_df = pd.read_csv('train.csv')
+test_download = train_df.head()
 
 #suitable download size
 TARGET_SIZE = 128
@@ -14,6 +16,7 @@ error_download = 0
 
 def image_download(df):
     global error_download
+    os.mkdir("""train""")
     try:
         for i in range(len(df)):
             filename = "./train/{}.jpeg".format(str(df.id[i]))
@@ -33,5 +36,5 @@ def image_download(df):
 
 
 
-
+image_download(test_download)
 
