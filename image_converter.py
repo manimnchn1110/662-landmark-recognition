@@ -1,8 +1,6 @@
 import numpy as np
 from PIL import Image
 
-
-
 def convert_rgb(img_name='b399f09dee9c3c67.jpeg'):
     img=Image.open('./train/'+img_name)
     image_rgb = img.convert("RGB")    #convert image into RGB pixel
