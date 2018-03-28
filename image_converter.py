@@ -11,4 +11,5 @@ def convert_rgb(img_name='b399f09dee9c3c67.jpeg'):
 
     return rgb_arr
 
-convert_rgb(img_name='b399f09dee9c3c67.jpeg')
+rgb_arr = convert_rgb(img_name='b399f09dee9c3c67.jpeg')
+print(rgb_arr.shape)
