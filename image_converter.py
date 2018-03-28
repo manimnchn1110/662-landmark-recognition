@@ -7,8 +7,6 @@ def convert_rgb(img_name='b399f09dee9c3c67.jpeg'):
     #image_bw = img.convert("L")# ---- B/L pixel
     # convert image to a matrix with values from 0 to 255 (uint8)
     rgb_arr = np.asarray(image_rgb)
-    print("After conversion to numerical representation: \n\n %r" % rgb_arr)
-
     return rgb_arr
 
 rgb_arr = convert_rgb(img_name='b399f09dee9c3c67.jpeg')
