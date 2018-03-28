@@ -6,7 +6,7 @@ from io import BytesIO
 import os
 
 train_df = pd.read_csv('train.csv')
-test_download = train_df.head()
+test_download = train_df.loc[0:100,]
 
 #suitable download size
 TARGET_SIZE = 128
