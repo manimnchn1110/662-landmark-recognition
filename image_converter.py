@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 
-def convert_rgb(img_name='b399f09dee9c3c67.jpeg'):
+def convert_rgb(img_name):
     img=Image.open('./train/'+img_name)
     image_rgb = img.convert("RGB")    #convert image into RGB pixel
     #image_bw = img.convert("L")# ---- B/L pixel
@@ -9,5 +9,14 @@ def convert_rgb(img_name='b399f09dee9c3c67.jpeg'):
     rgb_arr = np.asarray(image_rgb)
     return rgb_arr
 
-rgb_arr = convert_rgb(img_name='b399f09dee9c3c67.jpeg')
-print(rgb_arr.shape)
+
+def get_x_shape(img_name='b399f09dee9c3c67.jpeg'):
+    rgb_arr = convert_rgb(img_name)
+    shape = []
+    shape.append(None)
+    for x in rgb_arr.shape:
+        shape.append(x)
+    return shape
+
+shape = get_x_shape('b399f09dee9c3c67.jpeg')
+print(shape)
