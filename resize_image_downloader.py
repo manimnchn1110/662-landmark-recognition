@@ -9,14 +9,18 @@ train_df = pd.read_csv('train.csv')
 test_download = train_df.loc[0:100,]
 
 #suitable download size
-TARGET_SIZE = 128
-IMG_QUALITY = 90
+TARGET_SIZE = 224
 NUM_WORKERS = 8
 error_download = 0
+def create_file(file_name):
+    os.mkdir(file_name)
+    return None
+
+create_file("""train""")
 
 def image_download(df):
     global error_download
-    os.mkdir("""train""")
+    error_download = 0
     try:
         for i in range(len(df)):
             filename = "./train/{}.jpeg".format(str(df.id[i]))
@@ -27,7 +31,7 @@ def image_download(df):
             pil_image = Image.open(BytesIO(response.content))
             pil_image_rgb = pil_image.convert('RGB')
             pil_image_resize = pil_image_rgb.resize((TARGET_SIZE, TARGET_SIZE))
-            pil_image_resize.save(filename, quality=IMG_QUALITY)
+            pil_image_resize.save(filename)
     except:
         print('Fail to download the image.')
         error_download += 1
@@ -36,5 +40,5 @@ def image_download(df):
 
 
 
-image_download(test_download)
+fail = image_download(test_download)
 
