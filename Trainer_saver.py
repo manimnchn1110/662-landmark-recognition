@@ -1,6 +1,8 @@
 ##CNN - Landmark Recognition Trainer and Saver
 import tensorflow as tf
+import pandas as pd
 
+df = pd.read_csv('train.csv')
 #Global Variable Setup
 train_whole_sample_size = 100
 test_whole_sample_size = 100
@@ -265,7 +267,7 @@ with tf.Session() as sess:
         if (i % 1) == 0:
             print("The", i, "Train")
             img_test_xs, label_test_xs = sess.run([img_test_batch, test_label])
-            acc = sess.run(accuracy.eval, feed_dict={x: img_test_xs, y: label_test_xs, keep_prob: 1.00})
+            acc = sess.run(accuracy, feed_dict={x: img_test_xs, y: label_test_xs, keep_prob: 1.0})
             print("Itsers = " + str(i) + "  Accuracy: " + str(acc))
 
             summay = sess.run(merged, feed_dict={x: img_test_xs, y: label_test_xs, keep_prob: 1.00})
