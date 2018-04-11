@@ -1,26 +1,5 @@
 ##CNN - Landmark Recognition Trainer and Saver
 import tensorflow as tf
-import pandas as pd
-from PIL import Image
-import matplotlib.pyplot as plt
-
-df = pd.read_csv('train.csv')
-
-# First_100_training_set
-folder_path = './train' + '/'
-writer = tf.python_io.TFRecordWriter("Landmark_train.tfrecords")
-for i in range(100):
-    img_path = folder_path + df.id[i] + '.jpeg'
-    output = int(df.landmark_id[i])
-    img = Image.open(img_path)
-    img_raw = img.tobytes()
-    example = tf.train.Example(features=tf.train.Features(feature={
-        "label": tf.train.Feature(int64_list=tf.train.Int64List(value=[output])),
-        'img_raw': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw]))
-    }))
-    writer.write(example.SerializeToString())
-
-writer.close()
 
 #Global Variable Setup
 train_whole_sample_size = 100
@@ -278,18 +257,18 @@ with tf.Session() as sess:
     saver = tf.train.Saver()
     max_acc = 0
 
-    for i in range(1000):
+    for i in range(1001):
 
         img_xs, label_xs = sess.run([img_train_batch, train_label])
         sess.run(train_step, feed_dict={x: img_xs, y: label_xs, keep_prob: 0.75})
 
         if (i % 1) == 0:
-            print("The", i, "times training.")
+            print("The", i, "Train")
             img_test_xs, label_test_xs = sess.run([img_test_batch, test_label])
-            acc = accuracy.eval(feed_dict={x: {x: img_test_xs, y: label_test_xs, keep_prob: 1.0})
+            acc = sess.run(accuracy.eval, feed_dict={x: img_test_xs, y: label_test_xs, keep_prob: 1.00})
             print("Itsers = " + str(i) + "  Accuracy: " + str(acc))
 
-            summay = sess.run(merged, feed_dict={x: img_test_xs, y: label_test_xs, keep_prob: 1})
+            summay = sess.run(merged, feed_dict={x: img_test_xs, y: label_test_xs, keep_prob: 1.00})
 
             train_writer.add_summary(summay, i)
 
