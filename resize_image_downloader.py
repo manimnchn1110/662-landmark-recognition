@@ -16,7 +16,7 @@ def create_file(file_name):
     os.mkdir(file_name)
     return None
 
-create_file("""train""")
+#create_file("""train""")
 
 def image_download(df):
     global error_download
