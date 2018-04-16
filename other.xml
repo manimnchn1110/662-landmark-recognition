@@ -1,0 +1,28 @@
+<application>
+  <component name="PyTestFrameworkService">
+    <option name="SDK_TO_PYTEST">
+      <map>
+        <entry key="C:\Users\mani\Anaconda3\envs\chatbot\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\envs\py27\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\envs\py36\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\python.exe" value="true" />
+      </map>
+    </option>
+    <option name="SDK_TO_NOSETEST">
+      <map>
+        <entry key="C:\Users\mani\Anaconda3\envs\chatbot\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\envs\py27\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\envs\py36\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\python.exe" value="true" />
+      </map>
+    </option>
+    <option name="SDK_TO_TRIALTEST">
+      <map>
+        <entry key="C:\Users\mani\Anaconda3\envs\chatbot\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\envs\py27\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\envs\py36\python.exe" value="false" />
+        <entry key="C:\Users\mani\Anaconda3\python.exe" value="false" />
+      </map>
+    </option>
+  </component>
+</application>
