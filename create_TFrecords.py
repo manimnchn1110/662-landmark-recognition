@@ -1,6 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 from PIL import Image
+from sklearn.model_selection import train_test_split
 
 def create_TFrecord(df, file_name):
     folder_path = './train' + '/'
@@ -33,8 +34,10 @@ def create_TFrecord(df, file_name):
     writer.close()
     return sample_count,error, error_li
 
-training_set = pd.read_csv('train.csv')
-train_sample_count,train_error, train_error_li = create_TFrecord(training_set, "landmark_training_set.tfrecords")
+df = pd.read_csv('train.csv')
 
-test_set = training_set.sample(2000, random_state=222, replace=False)
-test_sample_count,test_error, test_error_li = create_TFrecord(test_set, "landmark_test_set.tfrecords")
+train, test = train_test_split(df, test_size=0.2)
+train_sample_count,train_error, train_error_li = create_TFrecord(train, "landmark_train.tfrecords")
+test_sample_count,test_error, test_error_li = create_TFrecord(test, "landmark_test.tfrecords")
+
+print(train_sample_count,train_error, train_error_li,test_sample_count,test_error, test_error_li)

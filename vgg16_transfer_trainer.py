@@ -8,8 +8,8 @@ df = pd.read_csv('./train.csv')
 train_whole_sample_size = 977468
 test_whole_sample_size = 244385
 gesture_class = len(df.landmark_id.unique())
-train_batch_size = 22
-test_batch_size = 22
+train_batch_size = 32
+test_batch_size = 32
 train_path = "./landmark_train.tfrecords"
 test_path = "./landmark_test.tfrecords"
 graph_path = "./tensorboard"
@@ -146,22 +146,22 @@ with tf.name_scope('conv4_1'):
 
 ##28 28 512
 ##conv4_2
-#with tf.name_scope('conv4_2'):
-#    W_conv4_2, b_conv4_2 = get_weight_bias('conv4_2')
-#    with tf.name_scope('h_conv4_2'):
-#        h_conv4_2 = tf.nn.relu(Conv2d_Filter(h_conv4_1, W_conv4_2) + b_conv4_2)
+with tf.name_scope('conv4_2'):
+    W_conv4_2, b_conv4_2 = get_weight_bias('conv4_2')
+    with tf.name_scope('h_conv4_2'):
+        h_conv4_2 = tf.nn.relu(Conv2d_Filter(h_conv4_1, W_conv4_2) + b_conv4_2)
 
 ##28 28 512
 ##conv4_3
-#with tf.name_scope('conv4_3'):
-#    W_conv4_3, b_conv4_3 = get_weight_bias('conv4_3')
-#    with tf.name_scope('h_conv4_3'):
-#        h_conv4_3 = tf.nn.relu(Conv2d_Filter(h_conv4_2, W_conv4_3) + b_conv4_3)
+with tf.name_scope('conv4_3'):
+    W_conv4_3, b_conv4_3 = get_weight_bias('conv4_3')
+    with tf.name_scope('h_conv4_3'):
+        h_conv4_3 = tf.nn.relu(Conv2d_Filter(h_conv4_2, W_conv4_3) + b_conv4_3)
 
 ## 14 14 512
 ##pool4
 with tf.name_scope('Pool4'):
-    h_pool4 = max_pooling_2x2(h_conv4_1, 'pool4')
+    h_pool4 = max_pooling_2x2(h_conv4_3, 'pool4')
 
 ## 14 14 512
 ##conv5_1
@@ -172,22 +172,22 @@ with tf.name_scope('conv5_1'):
 
 ##  14 14 512
 ##conv5_2
-#with tf.name_scope('conv5_2'):
-#    W_conv5_2, b_conv5_2 = get_weight_bias('conv5_2')
-#    with tf.name_scope('h_conv5_2'):
-#        h_conv5_2 = tf.nn.relu(Conv2d_Filter(h_conv5_1, W_conv5_2) + b_conv5_2)
+with tf.name_scope('conv5_2'):
+    W_conv5_2, b_conv5_2 = get_weight_bias('conv5_2')
+    with tf.name_scope('h_conv5_2'):
+        h_conv5_2 = tf.nn.relu(Conv2d_Filter(h_conv5_1, W_conv5_2) + b_conv5_2)
 
 ## 14 14 512
 ##conv5_3
-#with tf.name_scope('conv5_3'):
-#    W_conv5_3, b_conv5_3 = get_weight_bias('conv5_3')
-#    with tf.name_scope('h_conv5_3'):
-#        h_conv5_3 = tf.nn.relu(Conv2d_Filter(h_conv5_2, W_conv5_3) + b_conv5_3)
+with tf.name_scope('conv5_3'):
+    W_conv5_3, b_conv5_3 = get_weight_bias('conv5_3')
+    with tf.name_scope('h_conv5_3'):
+        h_conv5_3 = tf.nn.relu(Conv2d_Filter(h_conv5_2, W_conv5_3) + b_conv5_3)
 
 ##7 7 512
 ##pool5
 with tf.name_scope('Pool5'):
-    h_pool5 = max_pooling_2x2(h_conv5_1, 'pool5')
+    h_pool5 = max_pooling_2x2(h_conv5_3, 'pool5')
 
 ## 1 25088
 ##fc6
@@ -243,18 +243,19 @@ train_label = tf.one_hot(labels_train_batch, gesture_class, 1, 0)
 img_test_batch, labels_test_batch = read_and_decode(test_path, test_batch_size, test_whole_sample_size)
 test_label = tf.one_hot(labels_test_batch, gesture_class, 1, 0)
 
+saver = tf.train.Saver()
+
+
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.8
 ###Start to Train
-with tf.Session(config=tf.ConfigProto(
-    device_count={'CPU':8},
-    inter_op_parallelism_threads=1,
-    intra_op_parallelism_threads=1
-)) as sess:
+with tf.Session(config=config) as sess:
 
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     sess.run(init_op)
 
-    saver = tf.train.Saver()
-    saver.restore(sess, cnn_model_save_path)
+    #saver.restore(sess, cnn_model_save_path)
+    #print('Model restored!')
 
     train_writer = tf.summary.FileWriter(graph_path, sess.graph)
 
@@ -263,33 +264,36 @@ with tf.Session(config=tf.ConfigProto(
 
     img_train, label_train = sess.run([img_train_batch, train_label])
     img_test, label_test = sess.run([img_test_batch, test_label])
+    print('Dataset loaded.')
 
     acc = sess.run(accuracy, feed_dict={x: img_test, y: label_test, keep_prob: 1.0})
-    print("Accuracy before train: " + str(acc))
     max_acc = acc
-    for i in range(101):
+    print("Accuracy before train: " + str(max_acc))
 
-        print("Trained:", i)
+    #saver = tf.train.Saver()
+    for i in range(101):
+        print(str(i), 'Train Start!')
         sess.run(train_step, feed_dict={x: img_train, y: label_train, keep_prob: 1.0})
+        print("Trained:", str(i))
 
         if (i % 5) == 0:
-            print("Trained:", i)
-
             acc = sess.run(accuracy, feed_dict={x: img_test, y: label_test, keep_prob: 1.0})
             print("Itsers = " + str(i) + "  Accuracy: " + str(acc))
+            summay = sess.run(merged, feed_dict={x: img_test, y: label_test, keep_prob: 1.0})
+            train_writer.add_summary(summay, i)
+            print('Summary updated!')
 
             if max_acc < acc:
+                print('Accuracy elevated.')
                 max_acc = acc
-                saver.save(sess, save_path=cnn_model_save_path)
+                save_path = saver.save(sess, save_path=cnn_model_save_path)
                 print('Model updated! Accuracy:', max_acc)
-                summay = sess.run(merged, feed_dict={x: img_test, y: label_test, keep_prob: 1.0})
-                train_writer.add_summary(summay, i)
-                print('Sumarry updated!')
 
             if max_acc > 0.90:
                 break
 
     train_writer.close()
+
     coord.request_stop()
     coord.join(threads)
     sess.close()
